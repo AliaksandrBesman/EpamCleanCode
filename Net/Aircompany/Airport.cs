@@ -19,9 +19,7 @@ namespace Aircompany
         {
             return planes.Where(p => p.GetType() == typeof(PassengerPlane)).Select(p => (PassengerPlane)p).ToList();
         }
-         
         
-
         public List<MilitaryPlane> GetMilitaryPlanes()
         {
             return planes.Where(p => p.GetType() == typeof(MilitaryPlane)).Select(p => (MilitaryPlane)p).ToList();
@@ -54,20 +52,17 @@ namespace Aircompany
 
         public Airport SortByMaxFlightDistance()
         {
-            planes.OrderBy(p => p.GetMaxFlightDistance());
-            return this; 
+            return new Airport(planes.OrderBy(p => p.GetMaxFlightDistance()));
         }
 
         public Airport SortByMaxSpeed()
         {
-            planes.OrderBy(w => w.GetMaxSpeed());
-            return this;
+            return new Airport(planes.OrderBy(w => w.GetMaxSpeed()));
         }
 
         public Airport SortByMaxLoadCapacity()
         {
-            planes.OrderBy(w => w.GetMaxLoadCapacity());
-            return this;
+            return new Airport(planes.OrderBy(w => w.GetMaxLoadCapacity()));
         }
 
         public IEnumerable<Plane> GetPlanes()
@@ -80,6 +75,21 @@ namespace Aircompany
             return "Airport{" +
                     "planes=" + string.Join(", ", planes.Select(x => x.GetModel())) +
                     '}';
+        }
+
+        public virtual bool IsEqualByHash(object obj)
+        {
+            List<Plane> airport = obj as List<Plane>;
+            bool equality = true;
+            if (planes.Count == airport.Count)
+            {
+                for (int i = 0; i < planes.Count; i++)
+                {
+                    equality &= planes[i].GetHashCode() == airport[i].GetHashCode();
+                }
+            }
+
+            return equality;
         }
     }
 }

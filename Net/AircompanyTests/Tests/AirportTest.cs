@@ -27,41 +27,50 @@ namespace AircompanyTests.Tests
             new MilitaryPlane("C-130 Hercules", 650, 5000, 110000, MilitaryType.TRANSPORT,ClassificationLevel.SECRET, ExperimentalTypes.HIGH_ALTITUDE)
    };
 
-        private PassengerPlane planeWithMaxPassengerCapacity = new PassengerPlane("Boeing-747", 980, 16100, 70500, 242, ClassificationLevel.UNCLASSIFIED);
+        private readonly PassengerPlane expectedPassengerplaneWithMaxPassengerCapacity = new PassengerPlane("Boeing-747", 980, 16100, 70500, 242, ClassificationLevel.UNCLASSIFIED);
+        private readonly List<MilitaryPlane> expectedMilitaryPlanesWithTransport = new List<MilitaryPlane>()
+        {
+            new MilitaryPlane("C-130 Hercules", 650, 5000, 110000, MilitaryType.TRANSPORT,ClassificationLevel.SECRET, ExperimentalTypes.HIGH_ALTITUDE)
+        };
+        private readonly List<MilitaryPlane> expectedMilitaryPlanesWithTopSecret = new List<MilitaryPlane>()
+        {
+            new MilitaryPlane("B-1B Lancer", 1050, 21000, 80000, MilitaryType.BOMBER, ClassificationLevel.TOP_SECRET, ExperimentalTypes.HYPERSONIC),
+            new MilitaryPlane("B-52 Stratofortress", 1000, 20000, 80000, MilitaryType.BOMBER, ClassificationLevel.TOP_SECRET, ExperimentalTypes.HIGH_ALTITUDE)
+        };
 
         [Test]
-        public void MyTest1()
+        public void GetMilitaryPlanesWithTransport()
         {
             Airport airport = new Airport(planes);
             List<MilitaryPlane> transportMilitaryPlanes = airport.GetMilitaryPlanesWithEnteredMilitaryType(MilitaryType.TRANSPORT).ToList();
-            Assert.AreEqual(transportMilitaryPlanes.Count > 0,true);
+            Assert.AreEqual(transportMilitaryPlanes, expectedMilitaryPlanesWithTransport, "got the wrong military planes ");
         }
 
         [Test]
-        public void MyTest2()
+        public void GetPassengerPlaneWithMaxPassengersCapacity()
         {
             Airport airport = new Airport(planes);
-            PassengerPlane expectedPlaneWithMaxPassengersCapacity = airport.GetPassengerPlaneWithMaxPassengersCapacity();           
+            PassengerPlane passengerPlaneWithMaxPassengersCapacity = airport.GetPassengerPlaneWithMaxPassengersCapacity();
+            Assert.IsTrue(passengerPlaneWithMaxPassengersCapacity.GetHashCode()== expectedPassengerplaneWithMaxPassengerCapacity.GetHashCode(),"Wrong passenger capacity");
         }
 
         [Test]
-        public void MyTest3()
+        public void IsEqualAirportByHash()
         {
             Airport airport = new Airport(planes);
-            airport = airport.SortByMaxLoadCapacity();
-            List<Plane> planesSortedByMaxLoadCapacity = airport.GetPlanes().ToList();
-
-            bool nextPlaneMaxLoadCapacityIsHigherThanCurrent = true;
-            for (int i = 0; i < planesSortedByMaxLoadCapacity.Count - 1; i++)
-            {
-                Plane currentPlane = planesSortedByMaxLoadCapacity[i];
-                Plane nextPlane = planesSortedByMaxLoadCapacity[i + 1];
-                if (currentPlane.GetMaxLoadCapacity() > nextPlane.GetMaxLoadCapacity())
-                {
-                    nextPlaneMaxLoadCapacityIsHigherThanCurrent = false;
-                }
-            }
-            Assert.That(nextPlaneMaxLoadCapacityIsHigherThanCurrent==true);
+            Assert.IsTrue(airport.IsEqualByHash(airport.GetPlanes()), "the airport is not equal to itself"); 
         }
+
+        [Test]
+        public void GetMilitaryPlanesWithTopSecret()
+        {
+            Airport airport = new Airport(planes);
+            List<MilitaryPlane> topSecretMilitaryPlanes = airport.GetMilitaryPlanesWithEnteredClassificationLevel(ClassificationLevel.TOP_SECRET).ToList();
+            Assert.AreEqual(topSecretMilitaryPlanes, expectedMilitaryPlanesWithTopSecret, "got the wrong military planes ");
+        }
+
+
+
+
     }
 }
